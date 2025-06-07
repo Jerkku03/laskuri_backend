@@ -1,0 +1,8 @@
+POST http://localhost:3001/api/projects
+
+Content-Type: application/json
+
+{
+  "_id": "6745d5ac57560d2cfdab5c10",
+  "name": "project2"
+}
