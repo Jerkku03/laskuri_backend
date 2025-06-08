@@ -4,7 +4,7 @@ const User = require('../models/user')
 const mongoose = require('mongoose')
 
 usersRouter.post('/', async (request, response) => {
-  const { username, name, password } = await request.body
+  const { username, email, password } = await request.body
   if (password.length <= 3){
     return response.status(400).json({ error: 'password too short' })
   }
@@ -14,7 +14,7 @@ usersRouter.post('/', async (request, response) => {
 
   const user = new User({
     username,
-    name,
+    email,
     passwordHash
   })
 

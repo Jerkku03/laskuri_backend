@@ -3,8 +3,7 @@ const projectsRouter = require('express').Router()
 const Project = require('../models/project')
 const User = require('../models/user')
 require('express-async-errors')
-const jwt = require('jsonwebtoken')
-const { response } = require('express')
+const { userExtractor } = require('../utils/middleware')
 
 projectsRouter.get('/', async (request, response) => {
     const projects = await Project
@@ -22,27 +21,52 @@ projectsRouter.get('/:id', async (request, response, next) => {
       }
 })
 
-projectsRouter.post('/', async (request, response, next) => {
-  const body = request.body
+const getTokenFrom = request => {
+  const authorization = request.get('authorization')
+  if (authorization && authorization.startsWith('Bearer ')) {
+    return authorization.replace('Bearer ', '')
+  }
+  return null
+}
 
-  const decodedToken = jwt.verify(request.token, process.env.SECRET)
+projectsRouter.post('/', userExtractor, async (request, response) => {
+  const {user} = request
 
-  const user = await User.findById(decodedToken.id)
-
-  if (body.title == undefined || body.url == undefined){
-    response.status(400)
-    .catch(error => next(error))
-    return 
+  if (!user) {
+    return response.status(400).json({ error: 'UserId missing or not valid' })
   }
 
+  const {projectName} = request.body
+
   const project = new Project({
-    name: body.name,
-    user: user._id
+    projectName: projectName,
+    user: user
   })
   
 const savedProject = await project.save()
   user.projects = user.projects.concat(savedProject._id)
   await user.save()
+
+  response.status(201).json(savedProject)
+})
+
+projectsRouter.delete('/:id', userExtractor, async (request, response) => {
+  const { user } = request
+
+  if (!user) {
+    return response.status(401).json({ error: 'token invalid' })
+  }
+
+  const project = await Project.findById(request.params.id)
+
+  if ( project?.user.toString() === user._id.toString() ){
+    await Project.findByIdAndRemove(request.params.id)
+    response.status(204).end()
+  }
+  else{
+    response.status(401).json({ error: 'unauthorized access' })
+  }
+
 })
 
 module.exports = projectsRouter

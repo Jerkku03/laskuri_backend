@@ -5,8 +5,14 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  name: String,
+  email: String,
   passwordHash: String,
+  projects: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Project'
+    }
+  ]
 })
 
 userSchema.set('toJSON', {
