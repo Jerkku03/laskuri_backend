@@ -62,4 +62,21 @@ projectsRouter.delete('/:id', userExtractor, async (request, response) => {
 
 })
 
+projectsRouter.put('/:id', async (request, response, next) => {
+  const body = request.body
+
+  const project = {
+    projectName: body.projectName,
+    materials: body.materials,
+    important: body.important,
+  }
+
+  const updatedProject = await Project.findByIdAndUpdate(request.params.id, project, { new: true })
+    if (updatedProject){
+      response.json(updatedProject)}
+    else{
+      response.status(404).end()
+    }
+})
+
 module.exports = projectsRouter
