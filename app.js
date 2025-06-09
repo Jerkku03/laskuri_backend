@@ -9,6 +9,7 @@ const middleware = require('./utils/middleware')
 const logger = require('./utils/logger')
 const mongoose = require('mongoose')
 const projectsRouter = require('./controllers/projects')
+const allProjectsRouter = require('./controllers/allprojects')
 require('dotenv').config()
 
 mongoose.set('strictQuery', false)
@@ -33,6 +34,7 @@ app.use('/api/users', usersRouter)
 app.use('/api/login', loginRouter)
 app.use('/api/data', dataRouter)
 app.use('/api/projects', projectsRouter)
+app.use('/api/allProjects', allProjectsRouter)
 
 //if (process.env.NODE_ENV === 'test') {
 //  const testingRouter = require('./controllers/testing')

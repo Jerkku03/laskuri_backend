@@ -5,13 +5,6 @@ const User = require('../models/user')
 require('express-async-errors')
 const { userExtractor } = require('../utils/middleware')
 
-projectsRouter.get('/', async (request, response) => {
-    const projects = await Project
-        .find({})
-        .populate('user', {username: 1})
-            response.json(projects)
-})
-
 projectsRouter.get('/:id', async (request, response, next) => {
   const project = await Project.findById(request.params.id)
       if (project) {
