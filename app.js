@@ -40,7 +40,6 @@ app.use('/api/allProjects', allProjectsRouter)
 //  const testingRouter = require('./controllers/testing')
 //  app.use('/api/testing', testingRouter)}
 
-
 app.use(middleware.unknownEndpoint)
 app.use(middleware.errorHandler)
 
