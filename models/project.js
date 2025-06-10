@@ -4,11 +4,11 @@ const projectSchema = new mongoose.Schema({
   projectName: {
     type: String, 
     required: true},
-  materials: Array,
   user: {
     type: mongoose.Schema.Types.ObjectId, 
     ref: 'User'
-  }
+  },
+  materials: Array
 })
 
 projectSchema.set('toJSON', {

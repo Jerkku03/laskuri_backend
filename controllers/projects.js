@@ -23,7 +23,8 @@ const getTokenFrom = request => {
 }
 
 projectsRouter.post('/', userExtractor, async (request, response) => {
-  const {user} = request
+
+  const user = request.user
 
   if (!user) {
     return response.status(400).json({ error: 'UserId missing or not valid' })
@@ -33,7 +34,7 @@ projectsRouter.post('/', userExtractor, async (request, response) => {
 
   const project = new Project({
     projectName: projectName,
-    user: user
+    user: user._id
   })
   
 const savedProject = await project.save()
@@ -44,16 +45,11 @@ const savedProject = await project.save()
 })
 
 projectsRouter.delete('/:id', userExtractor, async (request, response) => {
-  const { user } = request
-
-  if (!user) {
-    return response.status(401).json({ error: 'token invalid' })
-  }
-
-  const project = await Project.findById(request.params.id)
-
-  if ( project?.user.toString() === user._id.toString() ){
-    await Project.findByIdAndRemove(request.params.id)
+  const deleted = await Project.findByIdAndDelete(request.params.id)
+  await User.updateOne({_id: request.user.id}, {
+    $pull: {projects: mongoose.Types.ObjectId(request.params.id)},
+});
+  if (deleted){
     response.status(204).end()
   }
   else{
