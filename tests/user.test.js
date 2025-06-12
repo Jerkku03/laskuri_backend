@@ -6,6 +6,7 @@ const mongoose = require('mongoose')
 const supertest = require('supertest')
 const helper = require('./test_helper')
 const app = require('../app')
+
 const api = supertest(app)
 
 describe('when there is initially one user at db', () => {
@@ -13,13 +14,14 @@ describe('when there is initially one user at db', () => {
     await User.deleteMany({})
 
     const passwordHash = await bcrypt.hash('sekret', 10)
-    const user = new User({ username: 'root', passwordHash, userId:"6745d5ac57560d2cfdab5c10"})
+    const user = new User({ username: 'root', passwordHash, userId:"684a924304172d7d514d46a7"})
 
     await user.save()
   })
 
   test('creation succeeds with a fresh username', async () => {
     const usersAtStart = await helper.usersInDb()
+    console.log(usersAtStart)
 
     const newUser = {
       _id: "6745d5ac57560d2cfdab5c10",

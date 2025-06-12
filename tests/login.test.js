@@ -6,6 +6,7 @@ const mongoose = require('mongoose')
 const supertest = require('supertest')
 const helper = require('./test_helper')
 const app = require('../app')
+
 const api = supertest(app)
 
 describe('user credentials in db', () => {
@@ -25,6 +26,13 @@ describe('user credentials in db', () => {
         .expect(201)
         .expect('Content-Type', /application\/json/)
     })
+    test('should fail with missing email or password', async () => {
+    await api
+      .post('/api/login')
+      .send({
+        email: 'test@example.com' })
+      .expect(401)
+  })
   
     test('login succeeds', async () => {
       const knownUser = {
@@ -39,4 +47,8 @@ describe('user credentials in db', () => {
         .expect(200)
 
     })
+})
+
+after(async () => {
+  await mongoose.connection.close()
 })
