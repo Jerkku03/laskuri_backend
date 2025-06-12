@@ -11,8 +11,9 @@ allProjectsRouter.get('/:id', async (request, response) => {
     const projects = await Project
         .find({})
         .populate('user', {username: 1})
+            if (projects.length > 0){
             response.json(projects.filter((project) => project.user.id == id))
-
+            return}
 })
 
 module.exports = allProjectsRouter
